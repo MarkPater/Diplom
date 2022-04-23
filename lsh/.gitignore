@@ -1,0 +1,6 @@
+*.tar.gz
+*.backup
+.mypy_cache/
+preprocessing/
+.idea
+venv
