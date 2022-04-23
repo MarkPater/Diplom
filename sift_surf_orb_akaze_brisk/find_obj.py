@@ -17,45 +17,32 @@ USAGE
 # Python 2/3 compatibility
 from __future__ import print_function
 
+import sys
 import numpy as np
 import cv2 as cv
 
-from common import anorm, getsize
+from common import anorm
 
-FLANN_INDEX_KDTREE = 1  # bug: flann enums are missing
-FLANN_INDEX_LSH    = 6
-
-
-def init_feature(name):
-    chunks = name.split('-')
-    if chunks[0] == 'sift':
+def init_feature(feature):
+    if feature == 'sift':
         detector = cv.SIFT_create()
         norm = cv.NORM_L2
-    elif chunks[0] == 'surf':
+    elif feature == 'surf':
         detector = cv.xfeatures2d.SURF_create(800)
         norm = cv.NORM_L2
-    elif chunks[0] == 'orb':
+    elif feature == 'orb':
         detector = cv.ORB_create(400)
         norm = cv.NORM_HAMMING
-    elif chunks[0] == 'akaze':
+    elif feature == 'akaze':
         detector = cv.AKAZE_create()
         norm = cv.NORM_HAMMING
-    elif chunks[0] == 'brisk':
+    elif feature == 'brisk':
         detector = cv.BRISK_create()
         norm = cv.NORM_HAMMING
     else:
         return None, None
-    if 'flann' in chunks:
-        if norm == cv.NORM_L2:
-            flann_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
-        else:
-            flann_params= dict(algorithm = FLANN_INDEX_LSH,
-                               table_number = 6, # 12
-                               key_size = 12,     # 20
-                               multi_probe_level = 1) #2
-        matcher = cv.FlannBasedMatcher(flann_params, {})  # bug : need to pass empty dict (#1329)
-    else:
-        matcher = cv.BFMatcher(norm)
+
+    matcher = cv.BFMatcher(norm)
     return detector, matcher
 
 
@@ -139,34 +126,27 @@ def explore_match(win, img1, img2, kp_pairs, status = None, H = None):
     return vis
 
 
-def main():
-    import sys, getopt
-    opts, args = getopt.getopt(sys.argv[1:], '', ['feature='])
-    opts = dict(opts)
-    feature_name = opts.get('--feature', 'brisk')
-    try:
-        fn1, fn2 = args
-    except:
-        fn1 = '1_graf.jpeg'
-        fn2 = '2_graf.jpeg'
-
-    img1 = cv.imread(cv.samples.findFile(fn1), cv.IMREAD_GRAYSCALE)
-    img2 = cv.imread(cv.samples.findFile(fn2), cv.IMREAD_GRAYSCALE)
-    detector, matcher = init_feature(feature_name)
+def compare(feature, firstImageUrl, secondImageUrl):
+    print(feature)
+    print(firstImageUrl)
+    print(secondImageUrl)
+    img1 = cv.imread(cv.samples.findFile(firstImageUrl), cv.IMREAD_GRAYSCALE)
+    img2 = cv.imread(cv.samples.findFile(secondImageUrl), cv.IMREAD_GRAYSCALE)
+    detector, matcher = init_feature(feature)
 
     if img1 is None:
-        print('Failed to load fn1:', fn1)
+        print('Failed to load firstImageUrl:', firstImageUrl)
         sys.exit(1)
 
     if img2 is None:
-        print('Failed to load fn2:', fn2)
+        print('Failed to load secondImageUrl:', secondImageUrl)
         sys.exit(1)
 
     if detector is None:
-        print('unknown feature:', feature_name)
+        print('unknown feature:', feature)
         sys.exit(1)
 
-    print('using', feature_name)
+    print('using', feature)
 
     kp1, desc1 = detector.detectAndCompute(img1, None)
     kp2, desc2 = detector.detectAndCompute(img2, None)
@@ -189,9 +169,3 @@ def main():
     cv.waitKey()
 
     print('Done')
-
-
-if __name__ == '__main__':
-    #print(__doc__)
-    main()
-    cv.destroyAllWindows()
