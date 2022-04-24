@@ -1,8 +1,0 @@
-<!DOCTYPE RCC><RCC version="1.0">
-    <qresource prefix="/">
-        <file>config/qtquickcontrols2.conf</file>
-        <file>ui/FileDialogButton.qml</file>
-        <file>ui/ImageDropArea.qml</file>
-        <file>ui/ImageStub.qml</file>
-    </qresource>
-</RCC>
