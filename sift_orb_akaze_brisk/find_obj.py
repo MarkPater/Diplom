@@ -21,8 +21,6 @@ import sys
 import numpy as np
 import cv2 as cv
 
-from common import anorm
-
 def init_feature(feature):
     if feature == 'sift':
         detector = cv.SIFT_create()

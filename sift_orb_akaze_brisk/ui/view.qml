@@ -128,7 +128,7 @@ ApplicationWindow {
                 Layout.preferredWidth: root.btnWidth
                 text: "Clear"
                 highlighted: true
-                enabled: root.isResultReady
+                enabled: root.firstImageUrl !== "" || root.secondImageUrl !== ""
                 Material.elevation: 5
                 Material.background: root.clButton
                 onClicked: {
