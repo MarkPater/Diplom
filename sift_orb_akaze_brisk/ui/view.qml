@@ -40,7 +40,7 @@ ApplicationWindow {
                 Layout.bottomMargin: 12
                 color: root.clText
                 font.pointSize: 18
-                text: "Recognition algorithm:"
+                text: "Choose algorithm:"
             }
 
             RadioButton {

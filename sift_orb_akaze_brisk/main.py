@@ -1,5 +1,4 @@
 import sys
-import style_rc
 
 from pathlib import Path
 from find_obj import compare
